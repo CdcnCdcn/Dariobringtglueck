@@ -1,5 +1,12 @@
+import { createClient } from "@supabase/supabase-js";
+
+// Supabase-Client initialisieren
+const supabaseUrl = "https://<your-supabase-url>.supabase.co"; // Ersetze mit deiner Supabase-URL
+const supabaseKey = process.env.SUPABASE_KEY; // API-Key aus Umgebungsvariablen
+const supabase = createClient(https://ltzvbzpeplnjlokvbuit.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0enZienBlcGxuamxva3ZidWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI1Mjc5MjksImV4cCI6MjA0ODEwMzkyOX0.7iXtEDPdsQIko7wvn7p5m922FOR5WLE96cYbt2lm2GY);
+
 export default async function handler(req, res) {
-    // Preflight-Anfrage (OPTIONS) behandeln
+    // OPTIONS-Anfrage für CORS-Preflight
     if (req.method === "OPTIONS") {
         res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de");
         res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -7,22 +14,35 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
-    // POST-Anfrage behandeln
+    // POST-Anfrage verarbeiten
     if (req.method === "POST") {
-        res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de"); // Wichtig für CORS
         try {
-            // Beispiel: Logik für POST-Anfrage
-            const data = req.body;
-            console.log("Daten empfangen:", data);
+            const data = req.body; // Empfange Daten aus der Anfrage
+            console.log("Empfangene Daten:", data);
 
-            res.status(200).json({ message: "Daten erfolgreich verarbeitet.", data });
+            // Daten in Supabase einfügen
+            const { error } = await supabase.from("results").insert([data]);
+
+            if (error) {
+                console.error("Supabase-Fehler:", error.message);
+                res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de");
+                return res.status(401).json({ error: "Unauthorized", details: error.message });
+            }
+
+            // Erfolgreiche Antwort
+            res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de");
+            return res.status(200).json({
+                message: "Ergebnisse erfolgreich gespeichert.",
+                data: data,
+            });
         } catch (error) {
-            console.error("Fehler beim Verarbeiten der POST-Anfrage:", error.message);
-            res.status(500).json({ error: "Interner Serverfehler" });
+            console.error("Server-Fehler:", error.message);
+            res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de");
+            return res.status(500).json({ error: "Interner Serverfehler" });
         }
-    } else {
-        // Andere Methoden ablehnen
-        res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de"); // Wichtig für CORS
-        res.status(405).json({ error: "Methode nicht erlaubt" });
     }
+
+    // Nicht unterstützte Methoden ablehnen
+    res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de");
+    res.status(405).json({ error: "Methode nicht erlaubt" });
 }
