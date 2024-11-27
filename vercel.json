@@ -4,6 +4,10 @@
     {
       "src": "/api/saveResults",
       "dest": "/saveResults.js"
+    },
+    {
+      "src": "/api/getResults",
+      "dest": "/getResults.js"
     }
   ]
 }
