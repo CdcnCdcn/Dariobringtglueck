@@ -1,0 +1,21 @@
+{
+  "name": "aiactchecker-backend",
+  "version": "1.0.0",
+  "description": "Backend für AI Act Checker mit Express und Supabase",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=16.x"
+  },
+  "author": "Dein Name",
+  "license": "MIT"
+}
