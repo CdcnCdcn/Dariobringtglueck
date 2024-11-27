@@ -1,12 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Supabase-Client initialisieren
-const supabaseUrl = "https://<your-supabase-url>.supabase.co"; // Ersetze mit deiner Supabase-URL
-const supabaseKey = process.env.SUPABASE_KEY; // API-Key aus Umgebungsvariablen
-const supabase = createClient(https://ltzvbzpeplnjlokvbuit.supabase.co, eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0enZienBlcGxuamxva3ZidWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI1Mjc5MjksImV4cCI6MjA0ODEwMzkyOX0.7iXtEDPdsQIko7wvn7p5m922FOR5WLE96cYbt2lm2GY);
+const supabaseUrl = "https://ltzvbzpeplnjlokvbuit.supabase.co"; // Ersetze mit deiner Supabase-URL
+const supabaseKey = process.env.SUPABASE_KEY || "<dein-supabase-api-key>"; // Nutze Umgebungsvariablen oder den Schlüssel direkt
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req, res) {
-    // OPTIONS-Anfrage für CORS-Preflight
+    // OPTIONS-Anfrage für Preflight
     if (req.method === "OPTIONS") {
         res.setHeader("Access-Control-Allow-Origin", "https://reviergold.de");
         res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -17,10 +17,11 @@ export default async function handler(req, res) {
     // POST-Anfrage verarbeiten
     if (req.method === "POST") {
         try {
-            const data = req.body; // Empfange Daten aus der Anfrage
+            // Empfange die Daten aus der Anfrage
+            const data = req.body;
             console.log("Empfangene Daten:", data);
 
-            // Daten in Supabase einfügen
+            // Daten in die Supabase-Tabelle 'results' einfügen
             const { error } = await supabase.from("results").insert([data]);
 
             if (error) {
